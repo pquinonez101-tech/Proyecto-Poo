@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Estudiantes</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: white;
+            color: #333;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background-color: black;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid blue;
+            border-radius: 6px;
+            background-color: #a5e6e8;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .student-card {
+            background-color: darkseagreen;
+            border: 2px solid green;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+        }
+
+
+        .student-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .badge-lang {
+            color: green;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-delete {
+            background-color: #fecaca;
+            border: 1.5px solid #ef4444;
+            padding: 6px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-view {
+            background-color: #bfdbfe;
+            border: 1.5px solid #3b82f6;
+            padding: 6px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-card {
+            background-color: #a52121;
+            border: 2px solid red;
+            border-radius: 10px;
+            padding: 24px 28px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .form-card h2 {
+            text-align: center;
+            color: white;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1.5px solid black;
+            background-color: #f3adad;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            color: #f48d8d;
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0 0 12px 0;
+            padding-left: 4px;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-submit {
+            background-color: #fd8a94;
+            border: 1.5px solid #4e0202;
+            color: #4e0202;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-edit-full {
+            background-color: #bfdbfe;
+            border: 1.5px solid #2563eb;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-edit-contact {
+            background-color: #bbf7d0;
+            border: 1.5px solid #16a34a;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-back {
+            background-color: #e5e7eb;
+            border: 1px solid #9ca3af;
+            color: #374151;
+            padding: 8px 14px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: #fff;
+            border: 2px solid #16a34a;
+            padding: 24px 28px;
+            text-align: center;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-box p {
+            color: #15803d;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-cancel {
+            background: #fee2e2;
+            border: 1.5px solid #ef4444;
+            color: #991b1b;
+            padding: 6px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-confirm {
+            background: #dbeafe;
+            border: 1.5px solid #3b82f6;
+            color: #1e40af;
+            padding: 6px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="view-list">
+        <div class="top-bar">
+            <h2 style="margin:0; color:#1f2937;">Estudiantes</h2>
+            <button class="btn-primary" onclick="showAddForm()">+ Agregar Estudiante</button>
+        </div>
+
+        <input
+                type="text"
+                id="searchInput"
+                class="search-box"
+                placeholder=" Buscar..."
+                oninput="renderStudents()"
+        />
+
+        <div id="studentsList"></div>
+    </div>
+
+    <div id="view-detail" class="hidden">
+        <button class="btn-back" onclick="showList()">← Volver a la lista</button>
+        <div class="form-card">
+            <h2>Datos Estudiante</h2>
+            <div class="form-group">
+                <label>Nombre</label>
+                <p class="detail-value" id="detail-name"></p>
+            </div>
+            <div class="form-group">
+                <label>Correo</label>
+                <p class="detail-value" id="detail-email"></p>
+            </div>
+            <div class="form-group">
+                <label>Teléfono</label>
+                <p class="detail-value" id="detail-phone"></p>
+            </div>
+            <div class="form-group">
+                <label>Lenguaje</label>
+                <p class="detail-value" id="detail-language"></p>
+            </div>
+            <div class="form-footer">
+                <button class="btn-edit-full" onclick="showEditForm(false)">Editar</button>
+            </div>
+        </div>
+    </div>
+    <div id="view-form" class="hidden">
+        <button class="btn-back" onclick="showList()">← Cancelar</button>
+        <div class="form-card">
+            <h2 id="form-title">Agregar Estudiante</h2>
+            <form id="studentForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group" id="group-name">
+                    <label for="input-name">Nombre</label>
+                    <input type="text" id="input-name" required />
+                </div>
+                <div class="form-group" id="group-email">
+                    <label for="input-email">Correo</label>
+                    <input type="email" id="input-email" required />
+                </div>
+                <div class="form-group" id="group-phone">
+                    <label for="input-phone">Teléfono</label>
+                    <input type="text" id="input-phone" required />
+                </div>
+                <div class="form-group" id="group-language">
+                    <label for="input-language">Lenguaje</label>
+                    <input type="text" id="input-language" required />
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn-submit" id="form-submit-btn"> Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-box">
+        <p id="deleteModalText">¿Eliminar Estudiante?</p>
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeDeleteModal()"> Cancelar</button>
+            <button class="btn-confirm" onclick="confirmDelete()"> Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const USE_API = false;
+    const API_URL = "http://localhost:8080/alumnos";
+
+    let students = [
+        { id: 1, nombre: "Estudiante 1", correo: "estudiante@correo.com", numero_telefono: "+502 12345678", idioma: "Español" },
+        { id: 2, nombre: "Estudiante 2", correo: "estudiante2@correo.com", numero_telefono: "+502 87654321", idioma: "Inglés" }
+    ];
+
+    let selectedStudent = null;
+    let formMode = "create";
+    let studentIdToDelete = null;
+
+    function renderStudents() {
+        const query = document.getElementById("searchInput").value.toLowerCase();
+        const listContainer = document.getElementById("studentsList");
+        listContainer.innerHTML = "";
+
+        const filtered = students.filter(s =>
+            s.nombre.toLowerCase().includes(query) ||
+            s.correo.toLowerCase().includes(query) ||
+            s.idioma.toLowerCase().includes(query)
+        );
+
+        if (filtered.length === 0) {
+            listContainer.innerHTML = "<p style='text-align:center; color:#6b7280;'>No se encontraron estudiantes.</p>";
+            return;
+        }
+
+        filtered.forEach(student => {
+            const card = document.createElement("div");
+            card.className = "student-card";
+            card.innerHTML = `
+          <div class="student-info">
+            <h3>${student.nombre}</h3>
+            <p>${student.correo}</p>
+            <p>${student.numero_telefono}</p>
+          </div>
+          <div class="student-actions">
+            <span class="badge-lang">${student.idioma}</span>
+            <div class="btn-group">
+              <button class="btn-delete" onclick="openDeleteModal(${student.id}, '${student.nombre}')">Eliminar</button>
+              <button class="btn-view" onclick="viewStudent(${student.id})">Ver</button>
+            </div>
+          </div>
+        `;
+            listContainer.appendChild(card);
+        });
+    }
+    function hideAllViews() {
+        document.getElementById("view-list").classList.add("hidden");
+        document.getElementById("view-detail").classList.add("hidden");
+        document.getElementById("view-form").classList.add("hidden");
+    }
+
+    function showList() {
+        hideAllViews();
+        document.getElementById("view-list").classList.remove("hidden");
+        renderStudents();
+    }
+
+    function viewStudent(id) {
+        selectedStudent = students.find(s => s.id === id);
+        if (!selectedStudent) return;
+
+        document.getElementById("detail-name").textContent = selectedStudent.nombre;
+        document.getElementById("detail-email").textContent = selectedStudent.correo;
+        document.getElementById("detail-phone").textContent = selectedStudent.numero_telefono;
+        document.getElementById("detail-language").textContent = selectedStudent.idioma;
+
+        hideAllViews();
+        document.getElementById("view-detail").classList.remove("hidden");
+    }
+
+    function showAddForm() {
+        formMode = "create";
+        document.getElementById("form-title").textContent = "Agregar Estudiante";
+        document.getElementById("form-submit-btn").textContent = "✔ Agregar";
+        document.getElementById("studentForm").reset();
+
+        document.getElementById("group-name").classList.remove("hidden");
+        document.getElementById("group-language").classList.remove("hidden");
+        document.getElementById("input-name").required = true;
+        document.getElementById("input-language").required = true;
+
+        hideAllViews();
+        document.getElementById("view-form").classList.remove("hidden");
+    }
+    function showEditForm(onlyContact) {
+        if (!selectedStudent) return;
+        formMode = onlyContact ? "edit-contact" : "edit-full";
+
+        document.getElementById("form-title").textContent = onlyContact ? "Editar Contacto" : "Editar Estudiante";
+        document.getElementById("form-submit-btn").textContent = "✔ Editar";
+
+        document.getElementById("input-name").value = selectedStudent.nombre;
+        document.getElementById("input-email").value = selectedStudent.correo;
+        document.getElementById("input-phone").value = selectedStudent.numero_telefono;
+        document.getElementById("input-language").value = selectedStudent.idioma;
+
+        if (onlyContact) {
+            document.getElementById("group-name").classList.add("hidden");
+            document.getElementById("group-language").classList.add("hidden");
+            document.getElementById("input-name").required = false;
+            document.getElementById("input-language").required = false;
+        } else {
+            document.getElementById("group-name").classList.remove("hidden");
+            document.getElementById("group-language").classList.remove("hidden");
+            document.getElementById("input-name").required = true;
+            document.getElementById("input-language").required = true;
+        }
+
+        hideAllViews();
+        document.getElementById("view-form").classList.remove("hidden");
+    }
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        const nombre = document.getElementById("input-name").value.trim();
+        const correo = document.getElementById("input-email").value.trim();
+        const numero_telefono = document.getElementById("input-phone").value.trim();
+        const idioma = document.getElementById("input-language").value.trim();
+
+        if (formMode === "create") {
+            const newStudent = {
+                id: students.length ? Math.max(...students.map(s => s.id)) + 1 : 1,
+                nombre,
+                correo,
+                numero_telefono,
+                idioma
+            };
+            if (USE_API) {
+                await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newStudent)
+                });
+            }
+            students.push(newStudent);
+        } else if (formMode === "edit-full") {
+            selectedStudent.nombre = nombre;
+            selectedStudent.correo = correo;
+            selectedStudent.numero_telefono = numero_telefono;
+            selectedStudent.idioma = idioma;
+
+            if (USE_API) {
+                await fetch(`${API_URL}/${selectedStudent.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(selectedStudent)
+                });
+            }
+        } else if (formMode === "edit-contact") {
+            selectedStudent.correo = correo;
+            selectedStudent.numero_telefono = numero_telefono;
+
+            if (USE_API) {
+                await fetch(`${API_URL}/${selectedStudent.id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ correo, numero_telefono })
+                });
+            }
+        }
+
+        showList();
+    }
+
+    function openDeleteModal(id, nombre) {
+        studentIdToDelete = id;
+        document.getElementById("deleteModalText").textContent = `¿Estás seguro de eliminar al ${nombre}?`;
+        document.getElementById("deleteModal").style.display = "flex";
+    }
+
+    function closeDeleteModal() {
+        studentIdToDelete = null;
+        document.getElementById("deleteModal").style.display = "none";
+    }
+
+    async function confirmDelete() {
+        if (studentIdToDelete !== null) {
+            if (USE_API) {
+                await fetch(`${API_URL}/${studentIdToDelete}`, { method: "DELETE" });
+            }
+            students = students.filter(s => s.id !== studentIdToDelete);
+            renderStudents();
+        }
+        closeDeleteModal();
+    }
+
+    renderStudents();
+</script>
+</body>
+</html>
